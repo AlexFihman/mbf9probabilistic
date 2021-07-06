@@ -1,7 +1,7 @@
 #include "FunctionMaker.h"
 #include "TFastList.h"
 #include "mbf16.h"
-#include "xoshiro256pp.h"
+
 
 FunctionMaker::FunctionMaker(Mbf16* m, int level, TFastList* list) : mbf16(m), upperList(list), level(level)
 {
@@ -10,7 +10,7 @@ FunctionMaker::FunctionMaker(Mbf16* m, int level, TFastList* list) : mbf16(m), u
 	//this->level = level;
 }
 
-double FunctionMaker::getS()
+double FunctionMaker::getS(threefry4x32_ctr_t& ctr, threefry4x32_key_t key)
 {
 	if (mbf16->LevelDepth[level] == upperList->Count)
 		return 1.0;
@@ -47,9 +47,12 @@ double FunctionMaker::getS()
 
 		for (int i = 0;i < avail_to_fill;i++) {
 			FunctionMaker nextFM = FunctionMaker(mbf16, currLevel, &newList);
-			s += mbf16->comb(avail_to_fill, i) * nextFM.getS();
+			s += mbf16->comb(avail_to_fill, i) * nextFM.getS(ctr, key);
 			
-			int rand_item = next(state) % currList.Count;
+			ctr.v[0]++;
+			threefry4x32_ctr_t rand = threefry4x32(ctr, key);
+
+			int rand_item = rand.v[0] % currList.Count;
 			int item = currList.Items[rand_item];
 			newList.Add(item);
 			currList.Delete(item);
