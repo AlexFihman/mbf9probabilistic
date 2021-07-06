@@ -31,8 +31,9 @@ void thread_func(int tid) {
 	long double sum = 0;
 	long double sums = 0;
 	double t0 = TimeMillis();
-	for (int cycle=0;cycle<100;cycle++){
-		int func_no = init_value + tid * 50 + cycle;
+	int num_cycle = 1250000;
+	for (int cycle=0;cycle<num_cycle;cycle++){
+		int func_no = init_value + tid * num_cycle + cycle;
 		ctr.v[1] = func_no;
 		sum = 0;
 		mbfObj1.ClearLevel(c2);
