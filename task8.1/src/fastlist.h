@@ -1,10 +1,8 @@
 #ifndef fastlist
 #define fastlist
-#include "mtrand.h"
+
 
 class TFastList{
-private:
-	static MTRand mt;
 public:
 	TFastList();
 	int           Count;
@@ -14,7 +12,7 @@ public:
 	void  Add(int i);
 	void  Delete(int i);
 	void  Clear();
-	int  RandItem();
+	int  RandItem(threefry4x32_ctr_t& ctr, threefry4x32_key_t& key);
 	void  Assign(TFastList* lst);
 };
 #endif

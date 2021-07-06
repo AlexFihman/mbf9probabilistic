@@ -1,6 +1,6 @@
+#include <Random123/threefry.h>
 #include "fastlist.h"
 #include "string.h"
-#include "mtrand.h"
 #include "assert.h"
 
 TFastList::TFastList(){
@@ -32,10 +32,12 @@ void TFastList::Clear(){
      Count = 0;
 }
 
-int TFastList::RandItem(){
+int TFastList::RandItem(threefry4x32_ctr_t& ctr, threefry4x32_key_t& key){
      //return Items[MRandom(Count)];
 	assert (Count > 0);
-	int it = mt.Rand()%Count;
+	ctr.v[0]++;
+	threefry4x32_ctr_t rand = threefry4x32(ctr, key);
+	int it = rand.v[0]%Count;
     return Items[it];
 }
 

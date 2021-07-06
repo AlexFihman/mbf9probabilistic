@@ -31,7 +31,7 @@ TMbfObj::~TMbfObj(){
   for (i=0;i<d3;i++){delete OutList[i];};
 };
 
-long double SumOfMbf(TMbfObj* mbfobj, int CurrLvl, long double CurrSum){
+long double SumOfMbf(TMbfObj* mbfobj, int CurrLvl, long double CurrSum, threefry4x32_ctr_t& ctr, threefry4x32_key_t& key){
   int i,j;
   int cnt;
   long double comb;
@@ -60,7 +60,7 @@ long double SumOfMbf(TMbfObj* mbfobj, int CurrLvl, long double CurrSum){
           for (j=0;j<=cnt; j++){
             comb = C[cnt][j];
             result = result + CurrSum * comb * power2[mbfobj->InList[CurrLvl+1]->Count];
-            if (j<cnt){mbfobj->AddRandItem2(CurrLvl);}
+            if (j<cnt){mbfobj->AddRandItem2(CurrLvl, ctr, key);}
           }
           mbfobj->ClearLevel(CurrLvl);
           break;
@@ -68,8 +68,8 @@ long double SumOfMbf(TMbfObj* mbfobj, int CurrLvl, long double CurrSum){
           for (i=0;i<=cnt;i++)
           {
             comb = C[cnt][i];
-            result = result + SumOfMbf(mbfobj,CurrLvl+1,CurrSum*comb);
-            if (i<cnt){mbfobj->AddRandItem(CurrLvl);}
+            result = result + SumOfMbf(mbfobj,CurrLvl+1,CurrSum*comb, ctr, key);
+            if (i<cnt){mbfobj->AddRandItem(CurrLvl, ctr, key);}
           }
           mbfobj->ClearLevel(CurrLvl);
           break;
@@ -95,10 +95,10 @@ void TMbfObj::AddItem(int item){
 	}
 }
 
-void TMbfObj::AddRandItem(int curr_lvl){
+void TMbfObj::AddRandItem(int curr_lvl,threefry4x32_ctr_t& ctr, threefry4x32_key_t& key){
   int Item;
   int j,lv;
-  Item = InList[curr_lvl]->RandItem();
+  Item = InList[curr_lvl]->RandItem(ctr, key);
   InList[curr_lvl]->Delete(Item);
   OutList[curr_lvl]->Add(Item);
   arr[Item] = true;
@@ -115,11 +115,11 @@ void TMbfObj::AddRandItem(int curr_lvl){
 }
 
 
-void TMbfObj::AddRandItem2(int curr_lvl){
+void TMbfObj::AddRandItem2(int curr_lvl, threefry4x32_ctr_t& ctr, threefry4x32_key_t& key){
   int item, item2;
   int j,lv;
 
-  item = InList[curr_lvl]->RandItem();
+  item = InList[curr_lvl]->RandItem(ctr, key);
   InList[curr_lvl]->Delete(item);
   OutList[curr_lvl]->Add(item);
   arr[item] = true;
