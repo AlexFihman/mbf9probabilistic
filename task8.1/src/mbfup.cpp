@@ -14,27 +14,37 @@
 using namespace std;
 
 std::mutex mtx;
-static const int num_threads = 8;
-
+static const int num_threads = 4;
+static int num_loops = 10000000;
 static int c1 = d2 >> 1;
 static int c2 = d2 - c1;
 static int c3;
 
+int loop_no;
+
 int init_value;
 
 void thread_func(int tid) {
+	threefry4x32_ctr_t  ctr = {{0,0,0,0}};
+	threefry4x32_key_t key = {{17,15,0,0}};
 	TMbfObj mbfObj1;
 	TMbfObj mbfObj2;
-	threefry4x32_ctr_t  ctr = {{0,0,0,0}};	
-	threefry4x32_key_t key = {{17,15,0,0}};
 
 	long double sum = 0;
 	long double sums = 0;
 	double t0 = TimeMillis();
-	int num_cycle = 1250000;
-	for (int cycle=0;cycle<num_cycle;cycle++){
-		int func_no = init_value + tid * num_cycle + cycle;
+
+	while (true) {
+		mtx.lock();
+		int func_no = loop_no++;
+		mtx.unlock();
+		if (func_no > num_loops)
+		    return;
+
+		ctr.v[0] = 0;
 		ctr.v[1] = func_no;
+		ctr.v[2] = init_value;
+
 		sum = 0;
 		mbfObj1.ClearLevel(c2);
 		mbfObj2.ClearLevel(c1);
