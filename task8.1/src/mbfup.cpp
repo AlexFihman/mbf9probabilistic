@@ -14,7 +14,7 @@
 using namespace std;
 
 std::mutex mtx;
-static const int num_threads = 4;
+static const int num_threads = 12;
 static int num_loops = 10000000;
 static int c1 = d2 >> 1;
 static int c2 = d2 - c1;
